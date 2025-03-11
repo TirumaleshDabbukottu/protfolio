@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do Application</title>
+    <style>
+        * {
+            margin: 0px;
+            padding: 0px;
+            box-sizing: border-box;
+        }
+
+        .con {
+            width: 40vw;
+            margin: 20px auto;
+            display: flex;
+            background-color: azure;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid black;
+        }
+
+        .inn {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        input {
+            padding: 8px;
+            border: 2px solid black;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: lightgreen;
+            border: 1px solid black;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: green;
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            transform: translateX(30%);
+        }
+
+        th,
+        td {
+            border: 2px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: antiquewhite;
+        }
+
+        h1 {
+            height:40px;
+            text-align: center;
+            background-color: rgb(78, 228, 226);
+            border-bottom: solid black 2px;
+            width: 100%;
+            padding: 0%;
+        }
+
+        .no-tasks {
+            text-align: center;
+            padding: 10px;
+            font-weight: bold;
+            color: red;
+        }
+
+        .completed {
+            text-decoration: line-through;
+            color: gray;
+        }
+    </style>
+</head>
+
+<body>
+  
+    <div class="con">
+        <h1>TO-DO Application</h1>
+        <div class="inn">
+            <input type="text" placeholder="Enter UID" name="uid" />
+            <input type="text" placeholder="Enter Task" name="task" />
+            <input type="date" name="dl" />
+            <button onclick="add()">Add</button>
+            <button onclick="upd()" style="display: none;">Update</button>
+        </div>
+
+    </div>
+    <table style="display: none;align-items: center;"></table>
+    <script>
+        let tasks = [];
+        let ipr = document.getElementsByTagName("input");
+        let btn = document.getElementsByTagName("button");
+        let tbl = document.getElementsByTagName("table")[0];
+        let ind = -1;
+
+        // Display tasks
+        let disp = () => {
+                
+                html = "<tr><th>SNO</th><th>User ID</th><th>Task</th><th>Deadline</th><th>Actions</th></tr>";
+                for (let i = 0; i < tasks.length; i++) {
+                    const taskClass = tasks[i].completed ? "completed" : "";
+                    html += `
+                        <tr>
+                            <td>${i + 1}</td>
+                            <td class="${taskClass}">${tasks[i].uid}</td>
+                            <td class="${taskClass}">${tasks[i].task}</td>
+                            <td class="${taskClass}">${tasks[i].dl}</td>
+                            <td>
+                                <button onclick="edit(${i})">Edit</button>
+                                <button onclick="del(${i})">Delete</button>
+                                <button onclick="complete(${i})">${tasks[i].completed ? "Undo" : "Complete"}</button>
+                            </td>
+                        </tr>`;
+                }
+           
+            tbl.innerHTML = html;
+        };
+
+
+        let add = () => {
+            let obj = {};
+            let isValid = true;
+            tbl.style.display='block'
+            
+            for (let i = 0; i < ipr.length; i++) {
+                if (ipr[i].value.trim() === "") {
+                    alert("All fields are required!");
+                    isValid = false;
+                    break;
+                }
+                obj = { ...obj, [ipr[i].name]: ipr[i].value.trim() };
+            }
+
+            if (isValid) {
+                obj.completed = false;
+                tasks.push(obj);
+                clearInputs();
+                disp();
+            }
+        };
+
+
+        let del = (index) => {
+            tasks.splice(index, 1);
+            disp();
+        };
+
+
+        let edit = (index) => {
+            ipr[0].value = tasks[index].uid;
+            ipr[1].value = tasks[index].task;
+            ipr[2].value = tasks[index].dl;
+            btn[0].style.display = "none";
+            btn[1].style.display = "inline-block";
+            ind = index;
+        };
+
+
+        let upd = () => {
+            let obj = {};
+            let isValid = true;
+
+            for (let i = 0; i < ipr.length; i++) {
+                if (ipr[i].value.trim() === "") {
+                    alert("All fields are required!");
+                    isValid = false;
+                    break;
+                }
+                obj = { ...obj, [ipr[i].name]: ipr[i].value.trim() };
+            }
+
+            if (isValid) {
+                obj.completed = tasks[ind].completed;
+                tasks[ind] = obj;
+                clearInputs();
+                btn[0].style.display = "inline-block";
+                btn[1].style.display = "none";
+                disp();
+            }
+        };
+
+
+        let complete = (index) => {
+            tasks[index].completed = !tasks[index].completed;
+            disp();
+        };
+
+
+        let clearInputs = () => {
+            for (let i = 0; i < ipr.length; i++) {
+                ipr[i].value = "";
+            }
+        };
+
+
+      
+    </script>
+</body>
+
+</html>
